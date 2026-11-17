@@ -1,0 +1,52 @@
+name: MobBy
+# Paper 1.20.6 is the compatibility floor. Declaring it here makes the server itself refuse to
+# load this jar on older versions ("Unsupported API version 1.20.6"), so no MobBy code runs there
+# and the plugin can never appear enabled-but-inert. Verified: 1.20.6 and 26.3 accept this value.
+version: '1.1.0'
+main: com.mobby.MobByPlugin
+api-version: '1.20.6'
+authors: [MobBy]
+description: Region based farm automation and simulation for Paper 1.20.6 and newer.
+website: https://github.com/arham052101gmiis-ctrl/Mobby
+commands:
+  mobby:
+    description: Manage MobBy automation regions.
+    usage: /mobby help
+    permission-message: You do not have permission to use MobBy.
+permissions:
+  mobby.admin:
+    description: Full access to every MobBy command and feature.
+    default: op
+    children:
+      mobby.create: true
+      mobby.start: true
+      mobby.stop: true
+      mobby.remove: true
+      mobby.list: true
+      mobby.info: true
+      mobby.reload: true
+      mobby.help: true
+  mobby.create:
+    description: Create and activate regions with /mobby active.
+    default: op
+  mobby.start:
+    description: Start automation for a stopped region.
+    default: op
+  mobby.stop:
+    description: Stop automation for an active region.
+    default: op
+  mobby.remove:
+    description: Permanently remove a region and its saved data.
+    default: op
+  mobby.list:
+    description: List all saved regions.
+    default: op
+  mobby.info:
+    description: Show detailed region information.
+    default: op
+  mobby.reload:
+    description: Reload the MobBy configuration.
+    default: op
+  mobby.help:
+    description: Show the MobBy command help.
+    default: true

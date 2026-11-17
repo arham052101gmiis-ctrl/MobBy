@@ -1,0 +1,134 @@
+# MobBy - region based farm automation
+# Every value is clamped to a safe minimum on load. Invalid values never stop the plugin.
+
+limits:
+  # Maximum block volume of a single region: (maxX-minX+1)*(maxY-minY+1)*(maxZ-minZ+1).
+  max-region-volume: 2000
+  # Maximum number of saved regions (active + stopped).
+  max-regions: 50
+  # Maximum number of regions that may be active at the same time.
+  max-active-regions: 10
+  # Maximum number of chunks MobBy may hold chunk tickets for, across all regions.
+  max-loaded-chunks: 64
+  # Hard cap on block/entity operations a single server tick may spend on simulation.
+  max-block-operations-per-tick: 200
+
+storage:
+  # How often (seconds) uptime is written to disk. A crash can lose at most this much uptime;
+  # server downtime is never counted as uptime.
+  uptime-checkpoint-seconds: 60
+  # Re-activate regions that were ACTIVE when the server stopped.
+  resume-active-regions-on-startup: true
+  # How often (seconds) the block index of an active region is rebuilt (furnaces, crops, redstone).
+  # Blocks placed inside an active region are picked up at the next rescan; /mobby start also rescans.
+  region-rescan-seconds: 60
+
+simulation:
+  # MobBy skips modules that vanilla already ticks when a player is this close to a region.
+  # Vanilla ticking radius is tied to the server simulation distance; this is a safety margin.
+  skip-when-player-within-blocks: 96
+
+modules:
+  mob-spawning:
+    enabled: true
+  furnace:
+    enabled: true
+  redstone:
+    enabled: true
+  crops:
+    # Measured on Paper 26.3: plugin-ticket chunks tick block entities and scheduled block ticks
+    # (furnaces, redstone) but do not run vanilla random ticks without players, so crops would not
+    # grow in an unattended region. This module supplies those random ticks at the vanilla rate and
+    # pauses automatically while a player is close enough for vanilla to tick the region.
+    enabled: true
+  animals:
+    enabled: true
+
+mob-spawning:
+  interval-ticks: 200
+  max-mobs-per-region: 20
+  max-mobs-per-cycle: 2
+  # Stop spawning when the region already contains this many entities of any kind.
+  max-entities-in-region: 80
+  spawn-attempts: 12
+  # Only spawn while the region is unattended (no player within simulation.skip-when-player-within-blocks).
+  only-when-unattended: true
+  remove-mobs-on-stop: false
+  remove-mobs-on-region-remove: true
+  require-solid-ground: true
+  max-light-level: 15
+  default-mob-type: ZOMBIE
+  # Optional per-region mob type overrides. Names are matched case-insensitively.
+  # Resolution order: this map -> mob spawner found in the region -> turtle egg rule -> default type.
+  region-mob-types:
+    GoldFarm: ZOMBIFIED_PIGLIN
+
+furnace:
+  interval-ticks: 20
+  # Consecutive passes in which a furnace made no vanilla progress before MobBy simulates it.
+  stall-passes-before-simulation: 3
+  max-furnaces-per-pass: 32
+  # Burn duration used for fuel items MobBy has to simulate but for which no duration is configured.
+  unknown-fuel-burn-ticks: 300
+  # Force simulation even when vanilla is already ticking the furnace. TESTING ONLY: this
+  # accelerates furnaces beyond vanilla speed. Leave false on production servers.
+  always-simulate: false
+  fuel-burn-ticks:
+    COAL: 1600
+    CHARCOAL: 1600
+    COAL_BLOCK: 16000
+    BLAZE_ROD: 2400
+    STICK: 100
+    OAK_PLANKS: 300
+    SPRUCE_PLANKS: 300
+    BIRCH_PLANKS: 300
+    JUNGLE_PLANKS: 300
+    ACACIA_PLANKS: 300
+    DARK_OAK_PLANKS: 300
+    MANGROVE_PLANKS: 300
+    CHERRY_PLANKS: 300
+    BAMBOO_PLANKS: 300
+    CRIMSON_PLANKS: 300
+    WARPED_PLANKS: 300
+    OAK_LOG: 300
+    SPRUCE_LOG: 300
+    BIRCH_LOG: 300
+    JUNGLE_LOG: 300
+    ACACIA_LOG: 300
+    DARK_OAK_LOG: 300
+    MANGROVE_LOG: 300
+    CHERRY_LOG: 300
+    LAVA_BUCKET: 20000
+    DRIED_KELP_BLOCK: 20000
+    BLAZE_POWDER: 1200
+
+redstone:
+  # Paper keeps plugin-ticket chunks ticking, so redstone already runs inside active regions.
+  # This fallback explicitly calls Block#tick() on tracked redstone components. It is off by
+  # default because it would double-tick components on a normally ticking server.
+  explicit-tick-fallback: false
+  max-components-per-pass: 64
+
+crops:
+  # Random-tick attempts per chunk section per server tick (vanilla uses 3).
+  random-ticks-per-section: 3
+  # Safety cap on crop random ticks per server tick, shared through the tick budget.
+  max-random-ticks-per-pass: 64
+  # Whether the server already runs vanilla random ticks in chunks held only by a plugin ticket.
+  # Measured: 1.20.6 no, 1.21.1 no, 1.21.4 no, 1.21.8 yes, 26.3 yes.
+  # auto: MobBy always supplies the random ticks. Where the server already does the same work
+  #       crops simply grow a little faster; growth is never left broken on an untested version.
+  # yes:  the server ticks them itself, MobBy never random-ticks (avoids redundant work).
+  # no:   force MobBy's own random ticks.
+  # yes/no, true/false and on/off are all accepted (YAML reads an unquoted yes as true).
+  native-random-ticks: auto
+
+animals:
+  interval-ticks: 600
+  max-animals-per-region: 12
+  max-breedings-per-cycle: 1
+  max-pair-distance: 8.0
+  # Vanilla love-mode duration is 600 ticks.
+  love-mode-ticks: 600
+
+debug: false

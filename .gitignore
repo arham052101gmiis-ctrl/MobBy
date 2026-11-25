@@ -12,7 +12,6 @@ __pycache__/
 *.py[cod]
 *.jar
 !gradle/wrapper/gradle-wrapper.jar
-!dist/MobBy-1.1.0.jar
 
 # Isolated server, world and test outputs
 /run/
@@ -48,3 +47,16 @@ banned-*.json
 *.jks
 local.properties
 /gradle.properties.local
+
+# Only the checksummed release belongs in the public distribution directory.
+/dist/*
+!/dist/MobBy-1.1.0.jar
+!/dist/MobBy-1.1.0-source.zip
+!/dist/SHA256SUMS-1.1.0.txt
+
+# Local server downloads and runtime installations
+/.jdk/
+/jdk*/
+/paper-cache/
+/.minecraft/
+*.hprof

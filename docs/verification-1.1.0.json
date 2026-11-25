@@ -1,0 +1,573 @@
+{
+  "verified_utc": "2026-11-25T05:50:40+00:00",
+  "jar_sha256": "857622d75f426a3b86a85e697ba9ceae719c76bfe08ccd23d616bc4e77f864e4",
+  "server": "Paper 26.3 build 256",
+  "java": "25.0.5.1",
+  "junit": {
+    "tests": 65,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "paper_sha256": "c86baf83b1fb0eb0d572f39484c242210896c6adf9cc9342d5c16c4de70c9bdc",
+  "paper": {
+    "passed": 103,
+    "checks": [
+      {
+        "check": "entity guard null",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "entity guard dead",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "entity guard invalid",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "target server version",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "zero players at startup",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "help reports MobBy v1.1.0",
+        "status": "PASS",
+        "detail": "MobBy v1.1.0 commands   /mobby active <x1> <y1> <z1> <x2> <y2> <z2> <name> - Create a region from two corners "
+      },
+      {
+        "check": "server plugin list contains MobBy",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "mob AI capabilities reported",
+        "status": "PASS",
+        "detail": "s, mob-aware=yes, pathfinder=yes [MobBy] Unattended mob AI: aware=yes, pathfinder=yes, activation-range=disabled (mobs tick at any distance)"
+      },
+      {
+        "check": "dark room region created",
+        "status": "PASS",
+        "detail": "[MobBy] Created and activated region 'DarkRoom' (567 blocks, 1 chunks). World: world [MobBy] Console created the region in 'world'. Pass an extra world name to target another world."
+      },
+      {
+        "check": "dark room floor index populated",
+        "status": "PASS",
+        "detail": "49 indexed floors"
+      },
+      {
+        "check": "2000 block volume limit enforced",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "exactly 2000 blocks accepted",
+        "status": "PASS",
+        "detail": "[MobBy] Created and activated region 'Limit' (2000 blocks, 2 chunks). World: world [MobBy] Console created the region in 'world'. Pass an extra world name to target another world."
+      },
+      {
+        "check": "2001 blocks rejected",
+        "status": "PASS",
+        "detail": "[MobBy] Region volume 2001 exceeds the limit of 2000 blocks."
+      },
+      {
+        "check": "nether gold farm region created",
+        "status": "PASS",
+        "detail": "[MobBy] Created and activated region 'GoldFarm' (147 blocks, 1 chunks). World: world_nether [MobBy] Console created the region in 'world_nether'. Pass an extra world name to target another world."
+      },
+      {
+        "check": "turtle egg region created",
+        "status": "PASS",
+        "detail": "[MobBy] Created and activated region 'GoldFarmEgg' (405 blocks, 4 chunks). World: world_nether [MobBy] Console created the region in 'world_nether'. Pass an extra world name to target another world."
+      },
+      {
+        "check": "egg region indexes the turtle egg",
+        "status": "PASS",
+        "detail": "edstone component(s), 0 crop(s), 4 MobBy mob(s) Spawn surfaces: 81 indexed floor(s), 1 turtle egg(s)"
+      },
+      {
+        "check": "overworld farm region created",
+        "status": "PASS",
+        "detail": "[MobBy] Created and activated region 'Farm' (384 blocks, 1 chunks). World: world [MobBy] Console created the region in 'world'. Pass an extra world name to target another world."
+      },
+      {
+        "check": "farm block index finds the furnace and crops",
+        "status": "PASS",
+        "detail": "on contents: 1 furnace(s), 2 redstone component(s), 16 crop(s), 0 MobBy mob(s) Spawn surfaces: 4 indexed floor(s), 0 turtle egg(s)"
+      },
+      {
+        "check": "hostile mobs spawned in the dark room without players",
+        "status": "PASS",
+        "detail": "12 zombies;  0 furnace(s), 0 redstone component(s), 0 crop(s), 12 MobBy mob(s) Spa"
+      },
+      {
+        "check": "spawned mobs carry MobBy persistent data",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "zombified piglins spawned on nether roof magma",
+        "status": "PASS",
+        "detail": "12 piglins in the walled farm"
+      },
+      {
+        "check": "no zombified piglin spawned on bedrock",
+        "status": "PASS",
+        "detail": "12/12 piglins stand on magma, the rest on the bedrock rim"
+      },
+      {
+        "check": "furnace smelted unattended",
+        "status": "PASS",
+        "detail": "501, 200, 500 has the following block data: [{Slot: 2b, id: \"minecraft:iron_ingot\", count: 3}]"
+      },
+      {
+        "check": "automated smelter delivered three ingots to chest",
+        "status": "PASS",
+        "detail": "501, 198, 500 has the following block data: [{Slot: 0b, id: \"minecraft:iron_ingot\", count: 3}]"
+      },
+      {
+        "check": "redstone piston fired unattended",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "crops grew unattended",
+        "status": "PASS",
+        "detail": "5/16 sampled crops above age 0"
+      },
+      {
+        "check": "turtle egg attraction pulls piglins to the egg ledge",
+        "status": "PASS",
+        "detail": "5 -> 5 piglins at the egg"
+      },
+      {
+        "check": "piglins moved off the spawn platform",
+        "status": "PASS",
+        "detail": "5 piglins within 2 blocks of the egg"
+      },
+      {
+        "check": "chunk tickets held while active",
+        "status": "PASS",
+        "detail": " 1 required, 1 loaded with MobBy chunk tickets (6/64 tickets in use) A"
+      },
+      {
+        "check": "Paper reports actual farm ticket",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "Paper confirms actual farm ticket release",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "chunk tickets released on stop",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "stopped region has no simulation data",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "stopped region restarts",
+        "status": "PASS",
+        "detail": "[MobBy] Region 'Farm' is now active."
+      },
+      {
+        "check": "region stop reports paused uptime",
+        "status": "PASS",
+        "detail": "[MobBy] Region 'DarkRoom' stopped; uptime is paused. Total uptime: 2 minutes"
+      },
+      {
+        "check": "dark room restarts",
+        "status": "PASS",
+        "detail": "[MobBy] Region 'DarkRoom' is now active."
+      },
+      {
+        "check": "region list shows four regions",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "reload keeps every region",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "unknown region is rejected",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "biome filter configuration reloaded",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "Pen activated",
+        "status": "PASS",
+        "detail": "[MobBy] Created and activated region 'Pen' (486 blocks, 4 chunks). World: world [MobBy] Console created the region in 'world'. Pass an extra world name to target another world."
+      },
+      {
+        "check": "GhastOpen activated",
+        "status": "PASS",
+        "detail": "[MobBy] Created and activated region 'GhastOpen' (1089 blocks, 1 chunks). World: world_nether [MobBy] Console created the region in 'world_nether'. Pass an extra world name to target another world."
+      },
+      {
+        "check": "native selection fixture is Nether wastes",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "Pen stop 1 released tickets",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "Pen start 1 restored tickets",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "Pen stop 2 released tickets",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "Pen start 2 restored tickets",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "Pen stop 3 released tickets",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "Pen start 3 restored tickets",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "Pen stop 4 released tickets",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "Pen start 4 restored tickets",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "GhastOpen stop 1 released tickets",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "GhastOpen start 1 restored tickets",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "GhastOpen stop 2 released tickets",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "GhastOpen start 2 restored tickets",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "GhastOpen stop 3 released tickets",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "GhastOpen start 3 restored tickets",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "GhastOpen stop 4 released tickets",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "GhastOpen start 4 restored tickets",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "biome exclusion suppresses managed spawns in the active Nether room",
+        "status": "PASS",
+        "detail": "peak observed count 0"
+      },
+      {
+        "check": "positive control probe enabled",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "biome filter configuration reloaded",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "unattended passive profile spawned managed cows",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "cow breeding produced a juvenile",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "native Nether biome selection produced a managed ghast",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "managed native ghast is aware",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "pre-spawn veto exercised",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "cancelled native candidates excluded",
+        "status": "PASS",
+        "detail": "0 observed"
+      },
+      {
+        "check": "GhastOpen removed",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "Pen removed",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "SlimeRoom fixture active",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "NoSlime fixture active",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "Pasture fixture active",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "managed profile ZOMBIE_VILLAGER",
+        "status": "PASS",
+        "detail": "3 observed"
+      },
+      {
+        "check": "managed profile SHEEP",
+        "status": "PASS",
+        "detail": "4 observed"
+      },
+      {
+        "check": "managed profile SLIME",
+        "status": "PASS",
+        "detail": "2 observed"
+      },
+      {
+        "check": "managed profile HUSK",
+        "status": "PASS",
+        "detail": "3 observed"
+      },
+      {
+        "check": "managed profile PIG",
+        "status": "PASS",
+        "detail": "4 observed"
+      },
+      {
+        "check": "managed profile SKELETON",
+        "status": "PASS",
+        "detail": "3 observed"
+      },
+      {
+        "check": "managed profile CHICKEN",
+        "status": "PASS",
+        "detail": "4 observed"
+      },
+      {
+        "check": "managed profile STRAY",
+        "status": "PASS",
+        "detail": "3 observed"
+      },
+      {
+        "check": "managed profile RABBIT",
+        "status": "PASS",
+        "detail": "8 observed"
+      },
+      {
+        "check": "managed profile CREEPER",
+        "status": "PASS",
+        "detail": "3 observed"
+      },
+      {
+        "check": "managed profile HORSE",
+        "status": "PASS",
+        "detail": "7 observed"
+      },
+      {
+        "check": "managed profile WITCH",
+        "status": "PASS",
+        "detail": "3 observed"
+      },
+      {
+        "check": "managed profile DONKEY",
+        "status": "PASS",
+        "detail": "7 observed"
+      },
+      {
+        "check": "managed profile ENDERMAN",
+        "status": "PASS",
+        "detail": "3 observed"
+      },
+      {
+        "check": "managed profile LLAMA",
+        "status": "PASS",
+        "detail": "8 observed"
+      },
+      {
+        "check": "managed profile SPIDER",
+        "status": "PASS",
+        "detail": "2 observed"
+      },
+      {
+        "check": "managed profile CAVE_SPIDER",
+        "status": "PASS",
+        "detail": "2 observed"
+      },
+      {
+        "check": "slimes excluded from non-slime chunk",
+        "status": "PASS",
+        "detail": "0 observed"
+      },
+      {
+        "check": "observer online over 1000 blocks from chamber",
+        "status": "PASS",
+        "detail": "MobByObserver has the following entity data: [1200.5d, 200.0d, 1200.5d]"
+      },
+      {
+        "check": "new managed zombie while sole player is distant",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "clean plugin shutdown",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "four active regions persisted",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "regions resumed after restart",
+        "status": "PASS",
+        "detail": "MobBy Regions (4) DarkRoom — ACTIVE   Running for: 2 seconds   Total uptime: 4 minutes GoldFarm — ACTIVE   Running for: "
+      },
+      {
+        "check": "resumed regions are ACTIVE",
+        "status": "PASS",
+        "detail": "4 ACTIVE entries"
+      },
+      {
+        "check": "resumed region has chunk tickets",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "resumed uptime is kept",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "clean shutdown after restart",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "no plugin errors in console-1795585475879959063.log",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "no plugin errors in console-1795585780967983363.log",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "no plugin errors in latest.log",
+        "status": "PASS",
+        "detail": ""
+      }
+    ]
+  },
+  "gold": {
+    "passed": 7,
+    "checks": [
+      {
+        "check": "zero players",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "farm active",
+        "status": "PASS",
+        "detail": "[MobBy] Created and activated region 'GoldFarm' (588 blocks, 1 chunks). World: world_nether [MobBy] Console created the region in 'world_nether'. Pass an extra world name to target another world."
+      },
+      {
+        "check": "collection chest starts empty",
+        "status": "PASS",
+        "detail": "102, 155, 102 has the following block data: []"
+      },
+      {
+        "check": "managed piglins reach cramming density",
+        "status": "PASS",
+        "detail": "peak sampled 24"
+      },
+      {
+        "check": "farm delivers gold nuggets to chest with no players",
+        "status": "PASS",
+        "detail": "18.3s, gold_nugget count query: 102, 155, 102 has the following block data: 1"
+      },
+      {
+        "check": "farm shutdown clean",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "check": "no plugin errors in console-1795585793344940375.log",
+        "status": "PASS",
+        "detail": ""
+      }
+    ]
+  }
+}

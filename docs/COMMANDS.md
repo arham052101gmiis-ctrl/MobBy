@@ -1,38 +1,26 @@
-# MobBy 1.1.0 commands
+# MobBy 1.1.0 command reference
 
-All commands are children of `/mobby` (alias-free, permission node in brackets).
+Use `/mobby help` in game or `mobby help` at the server console. Players create regions in their current world. The console uses the first loaded world unless the command includes a world name.
 
-| Command | Description | Permission |
-|---|---|---|
-| `/mobby active <x1> <y1> <z1> <x2> <y2> <z2> <name>` | Creates a region from two opposite corners and activates it immediately | `mobby.create` |
-| `/mobby start <name>` | Starts automation for a stopped region | `mobby.start` |
-| `/mobby stop <name>` | Stops automation, releases the region's chunk tickets and pauses uptime | `mobby.stop` |
-| `/mobby remove <name>` | Asks for confirmation, then deletes the region and its saved data | `mobby.remove` |
-| `/mobby remove <name> confirm` | Confirms the removal (must be run within 30 seconds) | `mobby.remove` |
-| `/mobby list` | Lists every saved region, its status, current session and total uptime | `mobby.list` |
-| `/mobby info <name>` | World, corners, volume, status, session, total uptime, chunk loading, modules, region contents | `mobby.info` |
-| `/mobby reload` | Reloads `config.yml` without touching regions and without restarting the task | `mobby.reload` |
-| `/mobby help` | Shows commands, examples and the volume rule | `mobby.help` |
+| Subcommand after `/mobby` | Permission | Behavior |
+| --- | --- | --- |
+| `active <x1> <y1> <z1> <x2> <y2> <z2> <name>` | `mobby.create` | Create a named cuboid and activate it immediately. Both corners count toward its volume. |
+| `start <name>` | `mobby.start` | Resume a stopped region. |
+| `stop <name>` | `mobby.stop` | Pause uptime and release the region's claim on chunk tickets. Other active regions can still hold shared chunks. |
+| `remove <name>` | `mobby.remove` | Request deletion of the region and its saved data. |
+| `remove <name> confirm` | `mobby.remove` | Confirm the pending removal within 30 seconds. |
+| `list` | `mobby.list` | List saved regions, status and uptime. |
+| `info <name>` | `mobby.info` | Inspect world, bounds, volume, status, uptime, tickets, modules and indexed contents. |
+| `reload` | `mobby.reload` | Reload plugin configuration. |
+| `help` | `mobby.help` | Show commands, examples and the volume rule. |
 
-Tab completion is implemented for sub commands and region names (stop only suggests active regions,
-start only stopped ones, and `remove` suggests `confirm`).
+The default for `mobby.help` is everyone. All other command permissions default to operators. Grant `mobby.admin` for access to every subcommand. [Permission definitions](../src/main/resources/plugin.yml)
 
-Console usage: `/mobby active` uses the first loaded world unless you append a ninth argument with a
-world name, e.g. `/mobby active 0 60 0 5 65 5 Test world_nether`.
+## Console example
 
-## Permissions
+```text
+mobby active 100 154 100 106 165 106 GoldFarm world_nether
+mobby info GoldFarm
+```
 
-| Permission | Default | Grants |
-|---|---|---|
-| `mobby.admin` | op | Every MobBy command (children below are all true) |
-| `mobby.create` | op | `/mobby active` |
-| `mobby.start` | op | `/mobby start` |
-| `mobby.stop` | op | `/mobby stop` |
-| `mobby.remove` | op | `/mobby remove` |
-| `mobby.list` | op | `/mobby list` |
-| `mobby.info` | op | `/mobby info` |
-| `mobby.reload` | op | `/mobby reload` |
-| `mobby.help` | true | `/mobby help` |
-
-
-The console accepts an extra world name after the region name when creating a region. For example, use `mobby active 100 127 100 106 129 106 GoldFarm world_nether`. Both corners count toward the 2,000-block volume limit.
+This example selects a 7 × 12 × 7 region in the Nether. The inclusive volume is 588 blocks. The maximum supported region volume is 2,000 blocks.

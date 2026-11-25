@@ -17,11 +17,13 @@ Create a 1,331-block region with `/mobby active 100 60 100 110 70 110 MyFarm`. I
 
 ## Validation and performance
 
-The rebuilt **1.1.0** JAR passed **65/65 JVM tests** and **103/103 Paper checks**, including clean shutdown and restart. Its SHA-256 is `857622d75f426a3b86a85e697ba9ceae719c76bfe08ccd23d616bc4e77f864e4`.
+The rebuilt **1.1.0** JAR passed **65/65 JVM tests** and **103/103 Paper checks**, including clean shutdown and restart. A subsequent clean build reproduced the exact release JAR and passed both suites again, plus 7/7 independent gold-farm checks with zero players online. Its SHA-256 is `857622d75f426a3b86a85e697ba9ceae719c76bfe08ccd23d616bc4e77f864e4`.
 
 The **180-minute soak** ran on **1.2.0-dev1**, SHA-256 `413a57506f8328fe131d08bb514f0593cc388238234be4b6f71f40b1c412bb14`. All 46 compiled classes and the default configuration matched the rebuilt release byte for byte. Only the version fields in the manifest and plugin descriptor changed.
 
-With four active regions and zero players, the candidate recorded median **20.0 TPS**, **0.9 MSPT** (sampled five-second means), and **3.1% of one logical CPU core**. Used heap ranged from 295 to 516 MiB. The fixtures collected 8,256 gold nuggets and 1,080 iron ingots. All seven tickets were released and zero loaded managed entities remained after region removal.
+Before the soak, the candidate passed 65/65 JVM tests, 196/196 Paper checks including a 15-minute reliability run, and 7/7 independent gold-farm checks.
+
+With four active regions and zero players, the candidate recorded median **20.0 TPS**, **0.9 MSPT** (sampled five-second means), and **3.1% of one logical CPU core**. Used heap ranged from 295 to 516 MiB. The fixtures collected 8,256 gold nuggets and 1,080 iron ingots across 361 samples. The server recorded zero crashes. All seven tickets were released and zero loaded managed entities remained after region removal.
 
 ## Scope
 

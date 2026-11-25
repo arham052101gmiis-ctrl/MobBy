@@ -128,7 +128,7 @@ public final class RegionManager {
         String name = runtime.region().name();
         logger.warning("[MobBy] World '" + runtime.region().worldName()
                 + "' is no longer loaded; stopping region " + name);
-        stopInternal(name, false);
+        stopInternal(runtime.region().key(), false);
         saveNow();
     }
 
@@ -264,18 +264,32 @@ public final class RegionManager {
 
     private Result activate(Region region, long now) {
         World world = Bukkit.getWorld(region.worldName());
+        if (region.bounds().volume() > plugin.settings().maxRegionVolume) {
+            return Result.error("Saved region exceeds the configured volume limit.");
+        }
         if (world == null) {
             return Result.error("World '" + region.worldName() + "' is not loaded.");
+        }
+        if (activeCount() >= plugin.settings().maxActiveRegions
+                || region.bounds().minY() < world.getMinHeight() || region.bounds().maxY() >= world.getMaxHeight()
+                || !insideWorldBorder(world, region.bounds())) {
+            return Result.error("Region is outside world bounds or the active region limit is reached.");
         }
         String ticketError = tickets.activate(region.key(), region.worldName(), region.bounds(),
                 plugin.settings().maxLoadedChunks);
         if (ticketError != null) {
             return Result.error("Could not load region chunks: " + ticketError);
         }
-        region.start(now);
-        RegionRuntime runtime = new RegionRuntime(plugin, region);
-        runtimes.put(region.key(), runtime);
-        engine.onRegionActivate(runtime);
+        try {
+            RegionRuntime runtime = new RegionRuntime(plugin, region);
+            region.start(now);
+            runtimes.put(region.key(), runtime);
+            engine.onRegionActivate(runtime);
+        } catch (RuntimeException error) {
+            stopInternal(region.key(), false);
+            logger.log(java.util.logging.Level.WARNING, "Failed to initialize region " + region.name(), error);
+            return Result.error("Could not initialize the region.");
+        }
         if (plugin.settings().resumeActiveRegions) {
             logger.fine("[MobBy] Activated region " + region.name());
         }

@@ -299,6 +299,9 @@ public final class MobByCommand implements TabExecutor {
                         + runtime.index().redstoneComponents().size() + " redstone component(s), "
                         + runtime.index().crops().size() + " crop(s), "
                         + runtime.lastTrackedMobCount() + " MobBy mob(s)"));
+        sender.sendMessage(Messages.line("Spawn surfaces",
+                runtime.index().floors().size() + " indexed floor(s), "
+                        + runtime.index().turtleEggs().size() + " turtle egg(s)"));
     }
 
     private void reload(CommandSender sender) {
@@ -314,7 +317,7 @@ public final class MobByCommand implements TabExecutor {
     }
 
     private void help(CommandSender sender) {
-        sender.sendMessage(Messages.header("MobBy commands"));
+        sender.sendMessage(Messages.header("MobBy v" + plugin.version() + " commands"));
         sender.sendMessage(Messages.usage("/mobby active <x1> <y1> <z1> <x2> <y2> <z2> <name>",
                 "Create a region from two corners and activate it", "mobby.create"));
         sender.sendMessage(Messages.usage("/mobby start <name>", "Start a stopped region", "mobby.start"));
@@ -335,6 +338,8 @@ public final class MobByCommand implements TabExecutor {
                 + plugin.settings().maxRegionVolume));
         sender.sendMessage(Messages.header("Server compatibility"));
         sender.sendMessage(Messages.info(plugin.compat().profileSummary()));
+        sender.sendMessage(Messages.info("Unattended mob AI: "
+                + plugin.engine().mobAiSummary()));
         if (!plugin.compat().missingFeatures().isEmpty()) {
             sender.sendMessage(Messages.info("Optional APIs unavailable: "
                     + String.join(", ", plugin.compat().missingFeatures())));

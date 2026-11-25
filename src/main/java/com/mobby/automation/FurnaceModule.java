@@ -224,7 +224,7 @@ public final class FurnaceModule implements AutomationModule {
         }
 
         inventory.setSmelting(newInput);
-        inventory.setFuel(newFuel);
+        if (hasFuel) inventory.setFuel(newFuel);
         inventory.setResult(newResult);
         furnace.setBurnTime((short) Math.max(0, Math.min(Short.MAX_VALUE, state.burnTime)));
         furnace.setCookTime((short) Math.max(0, Math.min(Short.MAX_VALUE, state.cookTime)));

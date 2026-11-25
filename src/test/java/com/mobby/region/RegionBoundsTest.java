@@ -88,4 +88,13 @@ class RegionBoundsTest {
         RegionBounds bounds = RegionBounds.of(-1, 0, -1, 0, 0, 0);
         assertEquals(4, bounds.chunkCount());
     }
+    @Test
+    void extremeCoordinatesCannotBypassTheVolumeLimit() {
+        var line = RegionBounds.of(Integer.MIN_VALUE, 0, 0, Integer.MAX_VALUE, 0, 0);
+        assertEquals(1L << 32, line.volume());
+        var box = RegionBounds.of(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE,
+                Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
+        assertEquals(Long.MAX_VALUE, box.volume());
+        assertEquals(Integer.MAX_VALUE, box.chunkCount());
+    }
 }

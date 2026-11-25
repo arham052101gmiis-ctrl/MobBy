@@ -77,6 +77,16 @@ public final class SimulationEngine {
         return null;
     }
 
+    /** Summary of the unattended mob AI capabilities, or {@code unavailable} when the module is off. */
+    public String mobAiSummary() {
+        for (AutomationModule module : modules) {
+            if (module instanceof MobSpawningModule spawning) {
+                return spawning.aiSummary();
+            }
+        }
+        return "unavailable (mob spawning module not loaded)";
+    }
+
     public void reload() {
         for (AutomationModule module : modules) {
             try {
@@ -92,7 +102,10 @@ public final class SimulationEngine {
         MobByConfig settings = plugin.settings();
         TickBudget budget = new TickBudget(settings.maxBlockOperationsPerTick);
 
-        for (RegionRuntime runtime : plugin.regions().activeRuntimes()) {
+        var active = plugin.regions().activeRuntimes();
+        int regionsLeft = active.size();
+        for (RegionRuntime runtime : active) {
+            TickBudget regionBudget = budget.share(regionsLeft--);
             if (!runtime.refreshWorld()) {
                 plugin.regions().worldUnavailable(runtime);
                 continue;
@@ -102,28 +115,23 @@ public final class SimulationEngine {
             } catch (RuntimeException exception) {
                 logFailure("runtime", runtime, exception);
             }
+            int due = 0;
             for (AutomationModule module : modules) {
-                if (budget.isExhausted()) {
-                    break;
-                }
-                boolean enabled;
-                int interval;
+                if (module.isEnabled() && tick % Math.max(1, module.intervalTicks()) == 0) due++;
+            }
+            for (AutomationModule module : modules) {
+                if (!module.isEnabled() || tick % Math.max(1, module.intervalTicks()) != 0) continue;
+                TickBudget moduleBudget = regionBudget.share(due--);
+                if (moduleBudget.isExhausted()) continue;
                 try {
-                    enabled = module.isEnabled();
-                    interval = Math.max(1, module.intervalTicks());
+                    module.tick(runtime, tick, moduleBudget);
                 } catch (RuntimeException exception) {
                     logFailure(module.id(), runtime, exception);
-                    continue;
-                }
-                if (!enabled || tick % interval != 0L) {
-                    continue;
-                }
-                try {
-                    module.tick(runtime, tick, budget);
-                } catch (RuntimeException exception) {
-                    logFailure(module.id(), runtime, exception);
+                } finally {
+                    regionBudget.tryConsume(moduleBudget.used());
                 }
             }
+            budget.tryConsume(regionBudget.used());
         }
     }
 

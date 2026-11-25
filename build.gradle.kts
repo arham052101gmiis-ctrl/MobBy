@@ -49,3 +49,14 @@ tasks.test {
         events("passed", "failed", "skipped")
     }
 }
+
+// Load the regression probe only in the disposable integration server.
+val paperProbe by sourceSets.creating {
+    compileClasspath += sourceSets.main.get().output + sourceSets.main.get().compileClasspath
+}
+val paperProbeJar by tasks.registering(Jar::class) {
+    from(paperProbe.output)
+    archiveFileName.set("MobBy-test-probe.jar")
+    destinationDirectory.set(layout.buildDirectory.dir("paper-fixtures"))
+}
+tasks.assemble { dependsOn(paperProbeJar) }

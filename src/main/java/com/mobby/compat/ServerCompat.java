@@ -5,7 +5,9 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.Furnace;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.Location;
 import org.bukkit.entity.Animals;
+import org.bukkit.entity.Mob;
 import org.bukkit.inventory.CookingRecipe;
 import org.bukkit.inventory.FurnaceInventory;
 
@@ -45,6 +47,8 @@ public final class ServerCompat {
     private final boolean snapshotInventoryApi;
     private final boolean loveModeApi;
     private final boolean recipeUsageApi;
+    private final boolean mobAwareApi;
+    private final boolean pathfinderApi;
 
     private final List<String> missingFeatures = new ArrayList<>();
     private final Set<String> warnings = ConcurrentHashMap.newKeySet();
@@ -62,6 +66,10 @@ public final class ServerCompat {
         this.loveModeApi = methodExists(Animals.class, "setLoveModeTicks", int.class);
         this.recipeUsageApi = methodExists(Furnace.class, "getRecipeUsedCount", NamespacedKey.class)
                 && methodExists(Furnace.class, "setRecipeUsedCount", CookingRecipe.class, int.class);
+        this.mobAwareApi = methodExists(Mob.class, "setAware", boolean.class);
+        this.pathfinderApi = methodExists(Mob.class, "getPathfinder")
+                && methodExists(com.destroystokyo.paper.entity.Pathfinder.class, "moveTo",
+                Location.class, double.class);
 
         if (!blockTickApi) {
             missingFeatures.add("Block#tick (explicit redstone fallback is unavailable)");
@@ -80,6 +88,12 @@ public final class ServerCompat {
         }
         if (!recipeUsageApi) {
             missingFeatures.add("furnace RecipesUsed XP bookkeeping (produced items get no stored XP)");
+        }
+        if (!mobAwareApi) {
+            missingFeatures.add("Mob#setAware (unattended mobs cannot be explicitly marked aware)");
+        }
+        if (!pathfinderApi) {
+            missingFeatures.add("Mob#getPathfinder (turtle-egg luring falls back to vanilla AI only)");
         }
     }
 
@@ -143,6 +157,15 @@ public final class ServerCompat {
         return blockTickApi;
     }
 
+    public boolean hasMobAwareApi() {
+        return mobAwareApi;
+    }
+
+    public boolean hasPathfinderApi() {
+        return pathfinderApi;
+    }
+
+
     /** One line summary used in the startup log and in {@code /mobby help}. */
     public String profileSummary() {
         return serverName + " " + minecraftVersion + " (Bukkit " + bukkitVersion + ")"
@@ -150,7 +173,9 @@ public final class ServerCompat {
                 + ", random-ticks=" + (blockRandomTickApi ? "yes" : "no")
                 + ", snapshot-inventory=" + (snapshotInventoryApi ? "yes" : "no")
                 + ", love-mode=" + (loveModeApi ? "yes" : "no")
-                + ", recipe-xp=" + (recipeUsageApi ? "yes" : "no");
+                + ", recipe-xp=" + (recipeUsageApi ? "yes" : "no")
+                + ", mob-aware=" + (mobAwareApi ? "yes" : "no")
+                + ", pathfinder=" + (pathfinderApi ? "yes" : "no");
     }
 
     /**
@@ -210,6 +235,43 @@ public final class ServerCompat {
         }
         warnOnce("love-mode", "This server has no Animals#setLoveModeTicks; using setBreed(true) instead.");
         animals.setBreed(true);
+    }
+
+    /** Marks a mob aware (runs its AI) when the server exposes {@code Mob#setAware}. */
+    public void setAware(Mob mob, boolean aware) {
+        if (mob == null || mob.isDead() || !mob.isValid()) {
+            return;
+        }
+        if (mobAwareApi) {
+            try {
+                mob.setAware(aware);
+            } catch (RuntimeException exception) {
+                warnOnce("mob-aware", "Could not change mob awareness: " + exception.getMessage());
+            }
+        } else {
+            warnOnce("mob-aware", "This server has no Mob#setAware API; unattended mobs keep their "
+                    + "default awareness.");
+        }
+    }
+
+    /**
+     * Requests vanilla pathfinding toward a location.
+     *
+     * @return {@code true} when a path request was accepted
+     */
+    public boolean moveTo(Mob mob, Location location, double speed) {
+        if (!pathfinderApi) {
+            warnOnce("pathfinder", "This server has no Mob#getPathfinder API; turtle-egg luring "
+                    + "relies on vanilla AI alone.");
+            return false;
+        }
+        try {
+            mob.getPathfinder().moveTo(location, speed);
+            return true;
+        } catch (RuntimeException exception) {
+            warnOnce("pathfinder-call", "Pathfinding request failed: " + exception.getMessage());
+            return false;
+        }
     }
 
     /** Records produced items in the furnace XP bookkeeping when the API exists. */

@@ -6,7 +6,7 @@ version: '1.1.0'
 main: com.mobby.MobByPlugin
 api-version: '1.20.6'
 authors: [MobBy]
-description: Region based farm automation and simulation for Paper 1.20.6 and newer.
+description: Region based farm automation and simulation for Paper 1.20.6 and newer, including unattended vanilla-like mob spawning and mob AI.
 website: https://github.com/arham052101gmiis-ctrl/Mobby
 commands:
   mobby:

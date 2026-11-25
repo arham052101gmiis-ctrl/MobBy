@@ -6,9 +6,13 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -48,7 +52,19 @@ public final class MobByConfig {
     public final boolean mobRequireSolidGround;
     public final int mobMaxLightLevel;
     public final EntityType mobDefaultType;
+    public final boolean naturalSpawns;
     public final Map<String, EntityType> regionMobTypes;
+    public final Map<EntityType, Integer> mobCaps;
+    public final boolean mobTurtleEggAttraction;
+    public final double mobTurtleEggRadius;
+    public final double mobPathfindSpeed;
+    public final Set<EntityType> mobTurtleEggAttracted;
+    public final boolean mobNetherRequireMagma;
+    public final boolean mobSlimeChunkOnly;
+    public final boolean mobKeepAware;
+    public final Set<String> mobAllowedBiomes;
+    public final Set<String> mobBlockedBiomes;
+    public final int mobScanAttempts;
 
     public final int furnaceIntervalTicks;
     public final int furnaceStallPasses;
@@ -75,7 +91,7 @@ public final class MobByConfig {
     public final boolean debug;
 
     public MobByConfig(FileConfiguration config) {
-        this.maxRegionVolume = clamp(config.getInt("limits.max-region-volume", 2000), 1, 1_000_000);
+        this.maxRegionVolume = clamp(config.getInt("limits.max-region-volume", 2000), 1, 2000);
         this.maxRegions = clamp(config.getInt("limits.max-regions", 50), 1, 10_000);
         this.maxActiveRegions = clamp(config.getInt("limits.max-active-regions", 10), 1, 10_000);
         this.maxLoadedChunks = clamp(config.getInt("limits.max-loaded-chunks", 64), 1, 100_000);
@@ -105,8 +121,22 @@ public final class MobByConfig {
         this.removeMobsOnRegionRemove = config.getBoolean("mob-spawning.remove-mobs-on-region-remove", true);
         this.mobRequireSolidGround = config.getBoolean("mob-spawning.require-solid-ground", true);
         this.mobMaxLightLevel = clamp(config.getInt("mob-spawning.max-light-level", 15), 0, 15);
-        this.mobDefaultType = parseEntityType(config.getString("mob-spawning.default-mob-type", "ZOMBIE"), EntityType.ZOMBIE);
+        this.naturalSpawns = "NATURAL".equalsIgnoreCase(config.getString("mob-spawning.default-mob-type", "NATURAL"));
+        this.mobDefaultType = naturalSpawns ? EntityType.ZOMBIE : parseEntityType(config.getString("mob-spawning.default-mob-type", "ZOMBIE"), EntityType.ZOMBIE);
         this.regionMobTypes = parseRegionMobTypes(config.getConfigurationSection("mob-spawning.region-mob-types"));
+        this.mobCaps = parseMobCaps(config.getConfigurationSection("mob-spawning.mob-caps"));
+        this.mobTurtleEggAttraction = config.getBoolean("mob-spawning.turtle-egg-attraction", true);
+        this.mobTurtleEggRadius = Math.max(1.0D, config.getDouble("mob-spawning.turtle-egg-radius", 24.0D));
+        this.mobPathfindSpeed = Math.max(0.1D, config.getDouble("mob-spawning.pathfind-speed", 1.0D));
+        this.mobTurtleEggAttracted = parseEntityTypeSet(
+                config.getStringList("mob-spawning.turtle-egg-attracted-mobs"),
+                List.of("ZOMBIFIED_PIGLIN"));
+        this.mobNetherRequireMagma = config.getBoolean("mob-spawning.nether.require-magma-surface", true);
+        this.mobSlimeChunkOnly = config.getBoolean("mob-spawning.slime-chunk-only", true);
+        this.mobKeepAware = config.getBoolean("mob-spawning.keep-mobs-aware", true);
+        this.mobAllowedBiomes = parseKeys(config.getStringList("mob-spawning.allowed-biomes"));
+        this.mobBlockedBiomes = parseKeys(config.getStringList("mob-spawning.blocked-biomes"));
+        this.mobScanAttempts = clamp(config.getInt("mob-spawning.placement-attempts", 16), 1, 1_000);
 
         this.furnaceIntervalTicks = clamp(config.getInt("furnace.interval-ticks", 20), 1, 7_200);
         this.furnaceStallPasses = clamp(config.getInt("furnace.stall-passes-before-simulation", 3), 1, 100);
@@ -192,6 +222,56 @@ public final class MobByConfig {
             types.put(key.toLowerCase(Locale.ROOT), type);
         }
         return Map.copyOf(types);
+    }
+
+    private static Map<EntityType, Integer> parseMobCaps(ConfigurationSection section) {
+        Map<EntityType, Integer> caps = new EnumMap<>(EntityType.class);
+        if (section == null) {
+            return Map.copyOf(caps);
+        }
+        for (String key : section.getKeys(false)) {
+            EntityType type = parseEntityType(key, null);
+            if (type == null) {
+                LOGGER.warning("[MobBy] Ignoring mob cap for unknown mob type '" + key + "'");
+                continue;
+            }
+            int cap = section.getInt(key, 0);
+            if (cap <= 0) {
+                LOGGER.warning("[MobBy] Ignoring non positive mob cap for '" + key + "'");
+                continue;
+            }
+            caps.put(type, clamp(cap, 1, 10_000));
+        }
+        return Map.copyOf(caps);
+    }
+
+    private static Set<EntityType> parseEntityTypeSet(List<String> raw, List<String> fallback) {
+        Set<EntityType> types = EnumSet.noneOf(EntityType.class);
+        List<String> source = raw == null || raw.isEmpty() ? fallback : raw;
+        for (String name : source) {
+            EntityType type = parseEntityType(name, null);
+            if (type == null) {
+                LOGGER.warning("[MobBy] Ignoring invalid mob type '" + name + "'");
+                continue;
+            }
+            types.add(type);
+        }
+        return Set.copyOf(types);
+    }
+
+    private static Set<String> parseKeys(List<String> raw) {
+        Set<String> keys = new LinkedHashSet<>();
+        if (raw == null) {
+            return Set.of();
+        }
+        for (String value : raw) {
+            if (value == null || value.isBlank()) {
+                continue;
+            }
+            String key = value.trim().toLowerCase(Locale.ROOT);
+            keys.add(key.startsWith("minecraft:") ? key.substring("minecraft:".length()) : key);
+        }
+        return Set.copyOf(keys);
     }
 
     private static Map<Material, Integer> parseFuelBurnTicks(ConfigurationSection section) {

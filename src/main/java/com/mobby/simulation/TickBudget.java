@@ -11,15 +11,21 @@ public final class TickBudget {
     private int used;
 
     public TickBudget(int limit) {
-        this.limit = Math.max(1, limit);
+        this.limit = Math.max(0, limit);
     }
 
     public boolean tryConsume(int amount) {
-        if (used + amount > limit) {
+        if (amount < 0 || amount > remaining()) {
             return false;
         }
         used += amount;
         return true;
+    }
+
+    /** Child allowance. Charge its actual usage to the parent when the work finishes. */
+    public TickBudget share(int participantsLeft) {
+        if (participantsLeft <= 0) throw new IllegalArgumentException("No participants");
+        return new TickBudget(remaining() / participantsLeft);
     }
 
     public boolean isExhausted() {

@@ -1,0 +1,12 @@
+name: MobByTestProbe
+version: '1'
+main: com.mobby.probe.EntityGuardProbe
+api-version: '1.20.6'
+depend: [MobBy]
+commands:
+  mobbytestghast:
+    description: Enable pre-spawn cancellation in the isolated ghast positive control
+  mobbytestticket:
+    description: Inspect candidate ticket ownership on the farm chunk
+  mobbytestaware:
+    description: Inspect the managed ghast on the isolated test server

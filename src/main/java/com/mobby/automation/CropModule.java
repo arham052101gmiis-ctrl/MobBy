@@ -7,7 +7,6 @@ import com.mobby.simulation.RegionRuntime;
 import com.mobby.simulation.TickBudget;
 import org.bukkit.block.Block;
 
-import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -65,7 +64,6 @@ public final class CropModule implements AutomationModule {
             return;
         }
         RegionBounds bounds = runtime.bounds();
-        Set<Long> chunks = bounds.chunkKeys();
         int minSectionY = bounds.minY() >> 4;
         int maxSectionY = bounds.maxY() >> 4;
         int minChunkX = bounds.minX() >> 4;
@@ -75,7 +73,7 @@ public final class CropModule implements AutomationModule {
         int chunkWidth = Math.max(1, maxChunkX - minChunkX + 1);
         int chunkDepth = Math.max(1, maxChunkZ - minChunkZ + 1);
         int sectionHeight = Math.max(1, maxSectionY - minSectionY + 1);
-        int sections = Math.max(1, chunks.size() * sectionHeight);
+        int sections = Math.max(1, bounds.chunkCount() * sectionHeight);
         int attempts = Math.min(settings.maxCropRandomTicksPerPass,
                 sections * settings.cropRandomTicksPerSection);
         ThreadLocalRandom random = ThreadLocalRandom.current();

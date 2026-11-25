@@ -35,8 +35,10 @@ public final class MobByPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        this.settings = new MobByConfig(getConfig());
+        this.settings = readSettings();
         this.compat = ServerCompat.detect(getLogger());
+        getLogger().info("MobBy v" + version() + " enabling for " + compat.serverName()
+                + " " + compat.minecraftVersion());
         getLogger().info("Compatibility profile: " + compat.profileSummary());
         for (String missing : compat.missingFeatures()) {
             getLogger().warning("Optional API unavailable on this server: " + missing);
@@ -86,7 +88,7 @@ public final class MobByPlugin extends JavaPlugin {
     public boolean reloadPlugin() {
         try {
             reloadConfig();
-            this.settings = new MobByConfig(getConfig());
+            this.settings = readSettings();
             engine.reload();
             regions.onSettingsReloaded();
             return true;
@@ -95,6 +97,20 @@ public final class MobByPlugin extends JavaPlugin {
                     exception);
             return false;
         }
+    }
+
+    private MobByConfig readSettings() {
+        MobByConfig result = new MobByConfig(getConfig());
+        if (result.redstoneExplicitTickFallback) {
+            getLogger().warning("redstone.explicit-tick-fallback is obsolete. Paper schedules redstone updates in ticketed chunks.");
+        }
+        return result;
+    }
+
+    /** Plugin version as declared in {@code plugin.yml}; also present in the JAR manifest. */
+    @SuppressWarnings("deprecation")
+    public String version() {
+        return getDescription().getVersion();
     }
 
     public MobByConfig settings() {

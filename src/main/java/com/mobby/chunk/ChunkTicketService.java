@@ -59,29 +59,35 @@ public final class ChunkTicketService {
             return "World '" + worldName + "' is not loaded";
         }
         Set<Long> chunkKeys = bounds.chunkKeys();
-        if (totalTickets() + chunkKeys.size() > globalLimit && !byRegion.containsKey(regionKey)) {
+        if (byRegion.containsKey(regionKey)) return "Region already owns chunk tickets";
+        long additional = chunkKeys.stream().filter(key -> !references.containsKey(
+                new ChunkRef(worldName, RegionBounds.unpackX(key), RegionBounds.unpackZ(key)))).count();
+        if (totalTickets() + additional > globalLimit) {
             return "Chunk limit reached (" + totalTickets() + "/" + globalLimit
                     + " tickets in use, this region needs " + chunkKeys.size() + ")";
         }
-        deactivate(regionKey);
-
         Set<ChunkRef> refs = ConcurrentHashMap.newKeySet();
+        // Register the set before adding tickets so a failed add can release everything this
+        // activation acquired instead of leaving a partially loaded region behind.
+        byRegion.put(regionKey, refs);
         for (long key : chunkKeys) {
             int chunkX = RegionBounds.unpackX(key);
             int chunkZ = RegionBounds.unpackZ(key);
             ChunkRef ref = new ChunkRef(worldName, chunkX, chunkZ);
             int owners = references.merge(ref, 1, Integer::sum);
+            refs.add(ref);
             if (owners == 1) {
                 try {
                     world.addPluginChunkTicket(chunkX, chunkZ, plugin);
                 } catch (RuntimeException exception) {
                     logger.warning("[MobBy] Could not add chunk ticket " + chunkX + "," + chunkZ
                             + " in " + worldName + ": " + exception.getMessage());
+                    deactivate(regionKey);
+                    return "Could not add chunk ticket " + chunkX + "," + chunkZ
+                            + " in " + worldName + ": " + exception.getMessage();
                 }
             }
-            refs.add(ref);
         }
-        byRegion.put(regionKey, refs);
         return null;
     }
 

@@ -1,0 +1,8 @@
+name: MobBySoakProbe
+version: '1'
+main: com.mobby.soak.SoakProbe
+api-version: '1.20.6'
+depend: [MobBy]
+commands:
+  mobbysoak:
+    description: Read isolated test fixtures and perform scheduled fixture maintenance

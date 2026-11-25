@@ -17,7 +17,14 @@ public record RegionBounds(int minX, int minY, int minZ, int maxX, int maxY, int
 
     /** Volume in blocks, both corners inclusive. */
     public long volume() {
-        return (long) (maxX - minX + 1) * (maxY - minY + 1) * (maxZ - minZ + 1);
+        long width = (long) maxX - minX + 1;
+        long height = (long) maxY - minY + 1;
+        long depth = (long) maxZ - minZ + 1;
+        if (width <= 0 || height <= 0 || depth <= 0 || width > Long.MAX_VALUE / height
+                || width * height > Long.MAX_VALUE / depth) {
+            return Long.MAX_VALUE;
+        }
+        return width * height * depth;
     }
 
     public boolean contains(int x, int y, int z) {
@@ -33,7 +40,9 @@ public record RegionBounds(int minX, int minY, int minZ, int maxX, int maxY, int
     }
 
     public int chunkCount() {
-        return chunkKeys().size();
+        long width = (long) (maxX >> 4) - (minX >> 4) + 1;
+        long depth = (long) (maxZ >> 4) - (minZ >> 4) + 1;
+        return (int) Math.min(Integer.MAX_VALUE, width * depth);
     }
 
     /** Chunk coordinates touched by this bound, packed as {@code (x << 32) ^ z}. */

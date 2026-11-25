@@ -21,6 +21,7 @@ public final class Region {
     private RegionStatus status;
     private long accumulatedMillis;
     private long sessionStartMillis;
+    private long accountingStartMillis;
     private long lastCheckpointMillis;
 
     public Region(String name, String worldName, RegionBounds bounds, RegionStatus status,
@@ -81,6 +82,7 @@ public final class Region {
         status = RegionStatus.ACTIVE;
         if (sessionStartMillis <= 0L) {
             sessionStartMillis = now;
+            accountingStartMillis = now;
         }
     }
 
@@ -90,6 +92,7 @@ public final class Region {
             return;
         }
         accumulate(now);
+        sessionStartMillis = 0;
         status = RegionStatus.STOPPED;
     }
 
@@ -97,16 +100,16 @@ public final class Region {
     public void checkpoint(long now) {
         if (status == RegionStatus.ACTIVE) {
             accumulate(now);
-            sessionStartMillis = now;
+            accountingStartMillis = now;
         }
         lastCheckpointMillis = now;
     }
 
     private void accumulate(long now) {
-        if (sessionStartMillis > 0L) {
-            accumulatedMillis += Math.max(0L, now - sessionStartMillis);
+        if (accountingStartMillis > 0L) {
+            accumulatedMillis += Math.max(0L, now - accountingStartMillis);
         }
-        sessionStartMillis = 0L;
+        accountingStartMillis = 0L;
     }
 
     /** Uptime of the current session, zero when stopped. */
@@ -118,7 +121,7 @@ public final class Region {
 
     /** Total uptime, including the currently running session. */
     public long totalUptime(long now) {
-        return accumulatedMillis + sessionUptime(now);
+        return accumulatedMillis + (accountingStartMillis > 0L ? Math.max(0L, now - accountingStartMillis) : 0L);
     }
 
     /** Total uptime banked up to the last checkpoint or stop. */
@@ -130,6 +133,7 @@ public final class Region {
     public void resumeAfterRestart(long now) {
         accumulatedMillis = Math.max(0L, accumulatedMillis);
         sessionStartMillis = now;
+        accountingStartMillis = now;
         status = RegionStatus.ACTIVE;
         lastCheckpointMillis = now;
     }

@@ -4,7 +4,6 @@ import com.mobby.MobByPlugin;
 import com.mobby.config.MobByConfig;
 import com.mobby.simulation.RegionRuntime;
 import com.mobby.simulation.TickBudget;
-import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Entity;
 
@@ -68,7 +67,7 @@ public final class AnimalModule implements AutomationModule {
                 continue;
             }
             animalCount++;
-            if (animal.isDead() || !(animal instanceof Ageable ageable) || !ageable.isAdult()) {
+            if (animal.isDead() || !animal.isValid() || !animal.isAdult()) {
                 continue;
             }
             if (animal.isLoveMode() || !animal.canBreed()) {

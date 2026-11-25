@@ -51,17 +51,48 @@ mob-spawning:
   # Stop spawning when the region already contains this many entities of any kind.
   max-entities-in-region: 80
   spawn-attempts: 12
+  # Candidate positions inspected per spawn attempt. Higher values find a valid floor faster in a
+  # region that is mostly air, at the cost of a few more block reads per cycle.
+  placement-attempts: 16
   # Only spawn while the region is unattended (no player within simulation.skip-when-player-within-blocks).
   only-when-unattended: true
   remove-mobs-on-stop: false
   remove-mobs-on-region-remove: true
+  # Extra floor requirement on top of the mob profile (hostile mobs always need a solid floor).
   require-solid-ground: true
+  # Global block-light cap. Mob profiles apply their own vanilla cap first (hostile mobs 0,
+  # animals 9-15); this value can only make the rule stricter, never looser. 15 = no extra cap.
   max-light-level: 15
-  default-mob-type: ZOMBIE
+  default-mob-type: NATURAL
+  # Per-mob caps. A type not listed uses max-mobs-per-region.
+  mob-caps:
+    ZOMBIFIED_PIGLIN: 16
+    ZOMBIE: 12
+    SKELETON: 12
+    CREEPER: 8
+    SPIDER: 8
+    SLIME: 8
+  # Slimes only spawn in vanilla slime chunks unless this is false (used by superflat slime farms).
+  slime-chunk-only: true
+  # Nether gold farms: zombified piglins may only spawn on magma platforms, never on bedrock.
+  nether:
+    require-magma-surface: false
+  # Turtle egg attraction for zombified piglins (the vanilla gold farm lure).
+  turtle-egg-attraction: true
+  turtle-egg-radius: 24.0
+  turtle-egg-attracted-mobs:
+    - ZOMBIFIED_PIGLIN
+  # Pathfinder speed used when MobBy nudges a mob toward a turtle egg.
+  pathfind-speed: 1.0
+  # Mark spawned mobs aware through Mob#setAware so their AI goal selectors run.
+  keep-mobs-aware: true
+  # Optional biome filters (keys without the minecraft: namespace). Empty allowed-biomes = all
+  # biomes; blocked-biomes always wins.
+  allowed-biomes: []
+  blocked-biomes: []
   # Optional per-region mob type overrides. Names are matched case-insensitively.
-  # Resolution order: this map -> mob spawner found in the region -> turtle egg rule -> default type.
-  region-mob-types:
-    GoldFarm: ZOMBIFIED_PIGLIN
+  # Explicit region and spawner types use profiles. NATURAL selects from the local biome.
+  region-mob-types: {}
 
 furnace:
   interval-ticks: 20
@@ -102,12 +133,8 @@ furnace:
     DRIED_KELP_BLOCK: 20000
     BLAZE_POWDER: 1200
 
-redstone:
-  # Paper keeps plugin-ticket chunks ticking, so redstone already runs inside active regions.
-  # This fallback explicitly calls Block#tick() on tracked redstone components. It is off by
-  # default because it would double-tick components on a normally ticking server.
-  explicit-tick-fallback: false
-  max-components-per-pass: 64
+# Paper schedules redstone and block entities in ticketed chunks.
+# Older redstone.explicit-tick-fallback and max-components-per-pass settings are obsolete.
 
 crops:
   # Random-tick attempts per chunk section per server tick (vanilla uses 3).

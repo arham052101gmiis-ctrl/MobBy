@@ -1,14 +1,50 @@
-# Build and IDE output
+# Build outputs, IDEs and local dependency caches
 .gradle/
+.gradle-*/
 build/
 out/
 target/
-*.class
 .idea/
+*.class
 *.iml
 .DS_Store
-run/
-
-# Never ignore the Gradle wrapper or the committed release jar
+__pycache__/
+*.py[cod]
+*.jar
 !gradle/wrapper/gradle-wrapper.jar
-!dist/MobBy-*.jar
+!dist/MobBy-1.1.0.jar
+
+# Isolated server, world and test outputs
+/run/
+/runs/
+/server/
+/servers/
+/test-server/
+/evidence/
+world/
+world_nether/
+world_the_end/
+logs/
+crash-reports/
+plugins/
+libraries/
+cache/
+*.jfr
+*.log
+*.mca
+level.dat*
+server.properties
+usercache.json
+ops.json
+whitelist.json
+banned-*.json
+
+# Local credentials and configuration
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.jks
+local.properties
+/gradle.properties.local

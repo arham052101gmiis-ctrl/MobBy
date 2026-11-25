@@ -94,4 +94,15 @@ class RegionTest {
     void cornersAreRenderedForInfo() {
         assertEquals("(0, 60, 0) -> (10, 70, 10)", region(RegionStatus.STOPPED, 0L).corners());
     }
+    @Test
+    void checkpointPreservesSessionOriginAcrossMultipleSaves() {
+        Region region = region(RegionStatus.STOPPED, 0);
+        region.start(1000);
+        region.checkpoint(61000);
+        region.checkpoint(121000);
+        assertEquals(120500, region.sessionUptime(121500));
+        assertEquals(120500, region.totalUptime(121500));
+        region.stop(121500);
+        assertEquals(120500, region.bankedUptime());
+    }
 }
